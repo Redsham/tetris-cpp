@@ -34,9 +34,9 @@ struct BoardMatrix {
     const T &operator()(const Vec2 &pos) const { return (*this)(pos.x, pos.y); }
 
 private:
-    std::vector<T, std::allocator<T> > data;   // Data storage for the grid
-    int                                width;  // Width of the grid
-    int                                height; // Height of the grid
+    std::vector<T> data;   // Data storage for the grid
+    int            width;  // Width of the grid
+    int            height; // Height of the grid
 };
 
 // --- Implementation ---

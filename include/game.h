@@ -6,7 +6,7 @@
 
 class Game {
 public:
-    bool                running = true; // Flag to control the game loop
+    bool                       running = true;                                                          // Flag to control the game loop
     BoardMatrix<unsigned char> grid    = BoardMatrix<unsigned char>(GAME_GRID_WIDTH, GAME_GRID_HEIGHT); // Pointer to the game grid
 
     void init();
@@ -14,12 +14,14 @@ public:
     void terminate();
 
 private:
-    Shape current_shape      = Shape(); // Current shape being played
-    Shape held_shape         = Shape(); // Shape to swap with the current shape
-    Vec2  landing_position   = Vec2();  // Position where the current shape will land
-    bool  can_swap           = true;    // Flag to indicate if swapping shapes is allowed
-    bool  held_shape_changed = false;   // Flag to indicate if the held shape has changed
-    bool  force_redraw       = false;   // Flag to force redraw of the game state
+    std::vector<unsigned int> shapes_pool        = {};      // Pool of next shapes to be played
+    Shape                     current_shape      = Shape(); // Current shape being played
+    Shape                     held_shape         = Shape(); // Shape to swap with the current shape
+    Vec2                      landing_position   = Vec2();  // Position where the current shape will land
+    bool                      can_swap           = true;    // Flag to indicate if swapping shapes is allowed
+    bool                      held_shape_changed = false;   // Flag to indicate if the held shape has changed
+    bool                      force_redraw       = false;   // Flag to force redraw of the game state
+
 
     void handle_input();
     void draw();

@@ -109,34 +109,42 @@ void Game::draw() {
     Rendering::set_color(Colors::Default);
 
     const auto center = Rendering::get_size() / 2;
-    const auto origin = Vec2(center.x / 2 - GAME_GRID_WIDTH / 2, center.y - GAME_GRID_HEIGHT / 2);
+    const auto origin = Vec2(center.x - GAME_GRID_WIDTH / 2, center.y - GAME_GRID_HEIGHT / 2);
 
-    Rendering::draw_border(origin - Vec2(1, 1), origin + Vec2(GAME_GRID_WIDTH, GAME_GRID_HEIGHT));
-    Rendering::draw_grid(grid, Vec2(center.x / 2 - GAME_GRID_WIDTH / 2, center.y - GAME_GRID_HEIGHT / 2));
+    Rendering::draw_border(Rect(origin + Vec2(-1, -1), Vec2(GAME_GRID_WIDTH * 2, GAME_GRID_HEIGHT) + Vec2(1, 1)));
+    Rendering::draw_grid(grid, origin);
 
     if (Rendering::is_resized() || held_shape_changed) {
-        const auto held_window_origin = origin - Vec2(GAME_HELD_WIDTH * 2, 1);
+        const auto held_window_origin = origin + Vec2(-GAME_HELD_WIDTH * 2 - 2, 0);
 
         // Clear the held shape area
-        Rendering::draw_box(Vec2(held_window_origin.x * 2, held_window_origin.y),
-                            Vec2((held_window_origin.x + GAME_HELD_WIDTH + 1) * 2,
-                                 held_window_origin.y + GAME_HELD_HEIGHT), SYMBOL_EMPTY);
+        Rendering::draw_box(Rect(held_window_origin, Vec2(GAME_HELD_WIDTH * 2, GAME_HELD_HEIGHT)), SYMBOL_EMPTY);
 
-        Rendering::draw_border(held_window_origin,
-                               held_window_origin + Vec2(GAME_HELD_WIDTH * 2 - 3, GAME_HELD_HEIGHT + 1));
-        Rendering::draw_shape(held_shape, held_window_origin + Vec2(1, 1), false);
-        Rendering::draw_text(Vec2(held_window_origin.x * 2 + 1, held_window_origin.y), L"HELD");
+        Rendering::draw_border(Rect(held_window_origin + Vec2(-1, -1), Vec2(GAME_HELD_WIDTH * 2 + 1, GAME_HELD_HEIGHT + 1)));
+        Rendering::draw_text(held_window_origin + Vec2(0, -1), L"HELD");
+
+        const auto shape_size       = held_shape.get_size() * Vec2(2, 1);
+        const auto held_window_size = Vec2(GAME_HELD_WIDTH * 2, GAME_HELD_HEIGHT);
+        Rendering::draw_shape(held_shape, held_window_origin + (held_window_size - shape_size) / 2, false);
 
         held_shape_changed = false;
     }
 
-    Rendering::draw_shape(current_shape, origin + landing_position, true);
-    Rendering::draw_shape(current_shape, origin + current_shape.position, false);
+    Rendering::draw_shape(current_shape, origin + landing_position * Vec2(2, 1), true);
+    Rendering::draw_shape(current_shape, origin + current_shape.position * Vec2(2, 1), false);
 }
 
 bool Game::next_shape() {
+    if (shapes_pool.empty()) {
+        shapes_pool = {0, 1, 2, 3, 4, 5, 6};                     // All shape indices
+        Random::shuffle(shapes_pool.begin(), shapes_pool.end()); // Shuffle the shape indices
+    }
+
     // Generate a new random shape
-    current_shape = Shape(Random::int_in_range<unsigned long>(0, Shape::SHAPES.size() - 1));
+    const auto shape_index = shapes_pool.back();
+    shapes_pool.pop_back();
+
+    current_shape = Shape(shape_index);
     move_shape(Vec2(grid.get_width() / 2 - current_shape.get_size().x / 2, 0));
 
     return is_shape_inbounds(current_shape.blocks, current_shape.position) && !

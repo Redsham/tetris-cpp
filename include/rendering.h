@@ -4,6 +4,7 @@
 
 #include "shape.h"
 #include "vec2.h"
+#include "rect.h"
 
 enum class Colors : short {
     Default = 1,
@@ -34,24 +35,24 @@ public:
 
     static void set_color(Colors color, bool inverted = false); // Set the color for drawing
 
-    static void draw_pixel(int x, int y, wchar_t symbol); // Draw a pixel at the specified coordinates
-    static void draw_pixel(const Vec2 &pos, const wchar_t symbol) { draw_pixel(pos.x, pos.y, symbol); }
+    static void draw_pixel(int x, int y, wchar_t symbol);                                               // Draw a pixel at the specified coordinates
+    static void draw_pixel(const Vec2 &pos, const wchar_t symbol) { draw_pixel(pos.x, pos.y, symbol); } // Draw a pixel at the specified position
 
-    static void draw_char(int x, int y, wchar_t symbol); // Draw a character at the specified coordinates
-    static void draw_char(const Vec2 &pos, wchar_t symbol) { draw_char(pos.x, pos.y, symbol); }
-    // Draw a character at the specified position
+    static void draw_char(int x, int y, wchar_t symbol);                                        // Draw a character at the specified coordinates
+    static void draw_char(const Vec2 &pos, wchar_t symbol) { draw_char(pos.x, pos.y, symbol); } // Draw a character at the specified position
 
-    static void draw_pixel_line(const Vec2 &start, const Vec2 &end, wchar_t symbol);
-    // Draw a line on the terminal screen
-    static void draw_line(const Vec2 &start, const Vec2 &end, wchar_t symbol); // Draw a line between two points
+    static void draw_pixel_line(const Vec2 &start, const Vec2 &end, wchar_t symbol); // Draw a line on the terminal screen
+    static void draw_line(const Vec2 &start, const Vec2 &end, wchar_t symbol);       // Draw a line between two points
 
-    static void draw_box(const Vec2 &min, const Vec2 &max, wchar_t symbol); // Draw a filled box between two points
+    static void draw_box(const Vec2 &min, const Vec2 &max, wchar_t symbol);                                                    // Draw a filled box between two points
+    static void draw_box(const Rect &rect, const wchar_t symbol) { draw_box(rect.get_left_top(), rect.get_right_bottom(), symbol); } // Draw a filled box around a rectangle
 
-    static void draw_border(const Vec2 &min, const Vec2 &max);  // Draw a border around the specified area
-    static void draw_text(const Vec2 &pos, const wchar_t *str); // Draw text at the specified position
+    static void draw_border(const Vec2 &min, const Vec2 &max);                                               // Draw a border around the specified area
+    static void draw_border(const Rect &rect) { draw_border(rect.get_left_top(), rect.get_right_bottom()); } // Draw a border around a rectangle
+    static void draw_text(const Vec2 &pos, const wchar_t *str);                                              // Draw text at the specified position
 
-    static void draw_grid(const BoardMatrix<unsigned char> &grid, Vec2 origin);  // Draw the game grid
-    static void draw_shape(const Shape &shape, Vec2 pos, bool is_shadow); // Draw a shape at the specified position
+    static void draw_grid(const BoardMatrix<unsigned char> &grid, Vec2 origin); // Draw the game grid
+    static void draw_shape(const Shape &shape, Vec2 pos, bool is_shadow);       // Draw a shape at the specified position
 
 private:
     inline static bool  resized; // Flag to indicate if the terminal has been resized

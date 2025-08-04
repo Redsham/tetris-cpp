@@ -64,12 +64,12 @@ void Rendering::set_color(Colors color, const bool inverted) {
 }
 
 void Rendering::draw_pixel(const int x, const int y, const wchar_t symbol) {
-    if (x < 0 || y < 0 || x * 2 >= get_width() || y >= get_height()) {
+    if (x < 0 || y < 0 || x >= get_width() || y >= get_height()) {
         overbound = true; // Set the overbound flag if the coordinates are out of bounds
         return;
     }
 
-    move(y, x * 2);                   // Move to the position, multiplying x by 2 for pixel width
+    move(y, x);                   // Move to the position, multiplying x by 2 for pixel width
     printw("%lc%lc", symbol, symbol); // Print the pixel character
 }
 
@@ -88,11 +88,11 @@ void Rendering::draw_grid(const BoardMatrix<unsigned char> &grid, const Vec2 ori
         for (int x = 0; x < grid.get_width(); ++x) {
             if (const auto value = grid(x, y); value != 0) {
                 set_color(static_cast<Colors>(value + 2), true);
-                draw_pixel(origin.x + x, origin.y + y, SYMBOL_EMPTY);
             } else {
                 set_color(Colors::Black, false);
-                draw_pixel(origin.x + x, origin.y + y, SYMBOL_EMPTY);
             }
+
+            draw_pixel(origin.x + x * 2, origin.y + y, SYMBOL_EMPTY);
         }
     }
 
@@ -105,7 +105,7 @@ void Rendering::draw_shape(const Shape &shape, const Vec2 pos, const bool is_sha
         for (int x = 0; x < shape.blocks.get_width(); ++x) {
             if (const auto block = shape.blocks(x, y); block != 0) {
                 set_color(static_cast<Colors>(block + 2), !is_shadow);
-                draw_pixel(pos.x + x, pos.y + y, is_shadow ? SYMBOL_SHADOW : SYMBOL_EMPTY);
+                draw_pixel(pos.x + x * 2, pos.y + y, is_shadow ? SYMBOL_SHADOW : SYMBOL_EMPTY);
             }
         }
     }
@@ -158,21 +158,19 @@ void Rendering::draw_box(const Vec2 &min, const Vec2 &max, const wchar_t symbol)
 
 void Rendering::draw_border(const Vec2 &min, const Vec2 &max) {
     // Draw the top border
-    draw_line(Vec2(min.x * 2, min.y), Vec2(max.x * 2, min.y), SYMBOL_BORDER_HORIZONTAL);
+    draw_line(Vec2(min.x, min.y), Vec2(max.x, min.y), SYMBOL_BORDER_HORIZONTAL);
     // Draw the bottom border
-    draw_line(Vec2(min.x * 2, max.y), Vec2(max.x * 2 + 1, max.y), SYMBOL_BORDER_HORIZONTAL);
+    draw_line(Vec2(min.x, max.y), Vec2(max.x, max.y), SYMBOL_BORDER_HORIZONTAL);
     // Draw the left border
-    draw_line(Vec2(min.x * 2, min.y), Vec2(min.x * 2, max.y), SYMBOL_BORDER_VERTICAL);
-    draw_line(Vec2(max.x * 2, min.y + 1), Vec2(max.x * 2, max.y - 1), SYMBOL_EMPTY);
+    draw_line(Vec2(min.x, min.y), Vec2(min.x, max.y), SYMBOL_BORDER_VERTICAL);
     // Draw the right border
-    draw_line(Vec2(max.x * 2 + 1, min.y), Vec2(max.x * 2 + 1, max.y), SYMBOL_BORDER_VERTICAL);
-    draw_line(Vec2(min.x * 2 + 1, min.y + 1), Vec2(min.x * 2 + 1, max.y - 1), SYMBOL_EMPTY);
+    draw_line(Vec2(max.x, min.y), Vec2(max.x, max.y), SYMBOL_BORDER_VERTICAL);
 
     // Draw corners
-    draw_char(min.x * 2, min.y, SYMBOL_BORDER_TOP_LEFT);
-    draw_char(max.x * 2 + 1, min.y, SYMBOL_BORDER_TOP_RIGHT);
-    draw_char(min.x * 2, max.y, SYMBOL_BORDER_BOTTOM_LEFT);
-    draw_char(max.x * 2 + 1, max.y, SYMBOL_BORDER_BOTTOM_RIGHT);
+    draw_char(min.x, min.y, SYMBOL_BORDER_TOP_LEFT);
+    draw_char(max.x, min.y, SYMBOL_BORDER_TOP_RIGHT);
+    draw_char(min.x, max.y, SYMBOL_BORDER_BOTTOM_LEFT);
+    draw_char(max.x, max.y, SYMBOL_BORDER_BOTTOM_RIGHT);
 }
 
 void Rendering::draw_text(const Vec2 &pos, const wchar_t *str) {
