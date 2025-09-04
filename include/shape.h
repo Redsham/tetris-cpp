@@ -4,6 +4,7 @@
 #include "board-matrix.h"
 #include "vec2.h"
 #include "vector"
+#include <stdexcept>
 
 struct Shape {
     // Define the shapes using a 2D vector of unsigned char
