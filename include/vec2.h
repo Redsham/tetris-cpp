@@ -8,7 +8,7 @@ struct Vec2 {
     // --- Constructors ---
 
     constexpr          Vec2() : x(0), y(0) {}                                 // Default constructor initializes to (0, 0)
-    explicit constexpr Vec2(const int x = 0, const int y = 0) : x(x), y(y) {} // Constructor with default values
+    explicit constexpr Vec2(const int x, const int y) : x(x), y(y) {} // Constructor with default values
 
     // --- Static constant vectors ---
 
