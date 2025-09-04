@@ -20,6 +20,7 @@ include_directories(include)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "src/*.cpp")
 
 # Include tests
+enable_testing()
 add_subdirectory(tests)
 
 add_executable(tetris ${SOURCES})

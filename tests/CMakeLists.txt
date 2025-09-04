@@ -9,8 +9,6 @@ FetchContent_MakeAvailable(googletest)
 # Include source files for tests
 file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS "*.cpp")
 
-enable_testing()
-
 add_executable(tetris-tests ${TEST_SOURCES})
 
 target_link_libraries(tetris-tests
